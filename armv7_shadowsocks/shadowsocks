@@ -62,7 +62,7 @@ update_scr="$ansi_white update_scr: "
 backup="$ansi_white backup: "
 
 # You can mount the partition path editing (EP:"/jffs" or "/tmp/mnt/sda1" )
-PREFIX=/jffs
+PREFIX=/tmp/mnt/sda2
 SCRIPT_DIR=$(dirname ${0})
 SCRIPT_DIR=$(cd ${SCRIPT_DIR} && pwd)
 
@@ -108,7 +108,7 @@ case ${1} in
 			entware
 			cd /tmp/root
 			mkdir -p $PREFIX/shadowsocks
-			cp $SCRIPT_DIR/shadowsocks $PREFIX/shadowsocks
+			cp $SCRIPT_DIR $PREFIX/shadowsocks
 			mount -o bind $PREFIX/opt /opt
 			/opt/bin/opkg update
 			if [ -e $SCRIPT_DIR/chinadns* -a -e $SCRIPT_DIR/diff* -a -e $SCRIPT_DIR/pcap_dns* -a -e $SCRIPT_DIR/pdns* -a -e $SCRIPT_DIR/shadowsocks-libe* -a -e $SCRIPT_DIR/dnscryp* ]; then
@@ -117,11 +117,12 @@ case ${1} in
 				sleep 5
 				ln -s $PREFIX/shadowsocks/shadowsocks /opt/bin
 			else
-				echo -e "$ansi_red You do not import the entire IPK! $ansi_std"
+				echo -e "$ansi_red Failed to install all dependencies! Rolling back installation! $ansi_std"
+				rm -r $PREFIX/shadowsocks
 				exit 0
 			fi
 		else
-			echo -e "$ansi_yellow SHADOWSOCKS already installed! $ansi_std"
+			echo -e "$ansi_yellow SHADOWSOCKS already installed at $PREFIX/shadowsocks! $ansi_std"
 		fi
 		echo -e -n $PLATFORM
 		sleep 1
